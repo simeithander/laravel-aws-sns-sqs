@@ -13,9 +13,9 @@
                             </div>
                         @endif
                         @isset($notification)
-                            {{ $notification }}
+                            Mensagem: {{ $notification }}
+                            <hr />
                         @endisset
-                        <hr />
                         @isset(Session::get('message')->status)
                             <h4>Email sent!!!</h4>
                             Title: {{ Session::get('message')->title ?? '' }}<br />
@@ -27,7 +27,7 @@
                             <input type="text" name="title" placeholder="Title Message"><br />
                             <textarea name="message" cols="30" rows="10" placeholder="Message"></textarea>
                             <br />
-                            <button type="submit">Submit Message</button>
+                            <button type="submit">Submit Email</button>
                         </form>
                     </div>
                 </div>

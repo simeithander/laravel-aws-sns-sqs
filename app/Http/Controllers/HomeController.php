@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Aws\Sns\SnsClient;
-use Aws\Exception\AwsException;
 use Aws\Sqs\SqsClient;
+use Aws\Exception\AwsException;
 
 class HomeController extends Controller
 {
@@ -78,12 +78,13 @@ class HomeController extends Controller
         'WaitTimeSeconds' => 0,
       ));
       if (!empty($result->get('Messages'))) {
-        $this->setMessage(json_decode($result->get('Messages')[0]['Body'])->Message);
+        $data = json_decode($result->get('Messages')[0]['Body'])->Message;
+        $this->setMessage(json_decode($data)->notificationType);
         // Deleta a mensagem
-        /* $result = $this->getSQSClient()->deleteMessage([
+        $result = $this->getSQSClient()->deleteMessage([
           'QueueUrl' => $this->queueUrl, // REQUIRED
           'ReceiptHandle' => $result->get('Messages')[0]['ReceiptHandle'] // REQUIRED
-        ]); */
+        ]);
       } else {
         return "No notifications";
       }
