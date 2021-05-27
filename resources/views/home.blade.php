@@ -12,19 +12,26 @@
                                 {{ session('status') }}
                             </div>
                         @endif
-                        @isset($notification)
-                            {{ $notification }}
-                        @endisset
-                        <hr />
+                        <p>Register emails</p>
+                        <form action={{ url('add-emails') }} method="post">
+                            @csrf
+                            <input type="text" name="list_mail" placeholder="mail1@example.com, mail2@example.com"
+                                style="width: 100%"><button type="submit">Submit Emails</button>
+                            {{ Session::get('addEmailConfirm')->emailConfirm ?? '' }}
+                            <br /><br />
+                        </form>
                         @isset(Session::get('message')->status)
                             <h4>Email sent!!!</h4>
                             Title: {{ Session::get('message')->title ?? '' }}<br />
                             Message: {{ Session::get('message')->message ?? '' }}
                             <hr />
                         @endisset
-                        <form action={{ url('send-mail') }} method="post">
+                        <p>Write Email</p>
+                        <form action={{ url('post-mail') }} method="post">
                             @csrf
-                            <input type="text" name="title" placeholder="Title Message"><br />
+                            <input style="width: 50%" type="text" name="from" placeholder="From"><br />
+                            <input style="width: 50%" type="text" name="to" placeholder="To"><br />
+                            <input type="text" name="title" placeholder="Title"><br />
                             <textarea name="message" cols="30" rows="10" placeholder="Message"></textarea>
                             <br />
                             <button type="submit">Submit Message</button>

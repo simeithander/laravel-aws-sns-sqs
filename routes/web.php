@@ -2,7 +2,9 @@
 
 use App\Http\Controllers\{
     PostController,
-    HomeController
+    HomeController,
+    SendMailController,
+    MobilePushController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -23,8 +25,14 @@ Route::get('/sqs-notifications', [PostController::class, 'getSQSNotifications'])
 Route::get('/sns-list-subscriptions', [PostController::class, 'listSNSSubscriptions']);
 Route::get('/sns-send-notification', [PostController::class, 'sendSNSNotification']);
 
-// Form Mail
-Route::post('/send-mail', [PostController::class, 'sendMail']);
+// SES
+Route::get('/list-mails', [SendMailController::class, 'listMails']);
+Route::post('/post-mail', [SendMailController::class, 'postMailSES']);
+Route::post('/add-emails', [SendMailController::class, 'addEmails']);
+
+// SES Mobile
+Route::get('/send-mobile', [MobilePushController::class, 'sendNotification']);
+Route::get('/create-plataform-endpoint', [MobilePushController::class, 'createPlataformEndpoint']);
 
 Auth::routes();
 
