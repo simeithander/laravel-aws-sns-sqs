@@ -6,7 +6,6 @@ use Illuminate\Http\Request;
 use Aws\Ses\SesClient;
 use Aws\Sns\SnsClient;
 use Aws\Exception\AwsException;
-use PhpParser\Node\Expr\Cast\String_;
 
 class SendMailController extends Controller
 {
@@ -141,8 +140,7 @@ class SendMailController extends Controller
       $EndpointArn = $Endpoint['EndpointArn'];
       try
       {
-        $this->getSNSClient()->publish(array('Message' => $message,
-                            'TargetArn' => $EndpointArn));
+        $this->getSNSClient()->publish(array('Message' => $message,'TargetArn' => $EndpointArn));
       }
       catch (AwsException $e)
       {

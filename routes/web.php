@@ -4,7 +4,8 @@ use App\Http\Controllers\{
     PostController,
     HomeController,
     SendMailController,
-    MobilePushController
+    MobilePushController,
+    NotificationsController
 };
 use Illuminate\Support\Facades\Route;
 
@@ -34,6 +35,8 @@ Route::post('/add-emails', [SendMailController::class, 'addEmails']);
 Route::get('/send-mobile', [MobilePushController::class, 'sendNotification']);
 Route::get('/create-plataform-endpoint', [MobilePushController::class, 'createPlataformEndpoint']);
 
+
 Auth::routes();
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+

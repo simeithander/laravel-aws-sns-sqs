@@ -3,6 +3,10 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\{
+    NotificationsController
+};
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -17,3 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+//Notifications
+Route::post('/notifications', [NotificationsController::class, 'store'])->name('store.notifications');
+Route::put('/notifications', [NotificationsController::class, 'update'])->name('update.notifications');
+Route::delete('/notifications', [NotificationsController::class, 'delete'])->name('delete.notifications');
