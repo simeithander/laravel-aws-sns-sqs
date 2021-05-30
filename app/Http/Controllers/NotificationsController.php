@@ -30,13 +30,12 @@ class NotificationsController extends Controller
 
     //Disable Endpoint
     if(isset($op) == "disable") $enabled = 'false';
-    
-    
+      
     if(isset($endpointArn)){
 
       try {
 
-        $result = $this->getSNSClient()->getEndpointAttributes(array(
+        $this->getSNSClient()->getEndpointAttributes(array(
           // EndpointArn is required
           'EndpointArn' => $endpointArn,  
         ));
@@ -44,7 +43,7 @@ class NotificationsController extends Controller
         if(isset($token)){
           // Update Token in Endpoint
           try {
-            $result = $this->getSNSClient()->setEndpointAttributes(array(
+            $this->getSNSClient()->setEndpointAttributes(array(
               // PlatformApplicationArn is required
               'EndpointArn' => $endpointArn,
               // Token is required
@@ -58,7 +57,7 @@ class NotificationsController extends Controller
               ),
             ));
 
-            return ['statusCode' => 200, 'message' => "Updated token"];
+            return ['statusCode' => 200, 'message' => "Updated token", 'EndpointArn' => $endpointArn, 'Token' => $token, "Enabled" => $enabled];
 
           }catch (AwsException $e) {
             // output error message if fails
@@ -94,7 +93,7 @@ class NotificationsController extends Controller
               'Token' => $token,
           ),
         ));
-        return ['status' => 201, 'EndpointArn'=> $result['EndpointArn']];
+        return ['status' => 201, 'EndpointArn'=> $result['EndpointArn'], 'Token' => $token];
 
       }catch (AwsException $e) {
         // output error message if fails
