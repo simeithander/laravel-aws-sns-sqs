@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Aws\Ses\SesClient;
 use Aws\Sns\SnsClient;
 use Aws\Exception\AwsException;
+use Aws\Ses\Exception\SesException;
+use PHPMailer\PHPMailer\PHPMailer;
+
 
 class SendMailController extends Controller
 {
@@ -76,9 +79,83 @@ class SendMailController extends Controller
     $message->title = $request->title;
     $message->message = $request->message;
 
+    $request->validate([
+      'file' => 'required|mimes:pdf,xlx,csv,png,jpg,jpeg|max:2048',
+    ]);
+
+    $fileName = time().'.'.$request->file->extension();  
+
+    $request->file->move(public_path('uploads'), $fileName);
+
+    $sender = $request->from;
+    $sendername = 'Simei Thander';
+
+    // Replace recipient@example.com with a "To" address. If your account
+    // is still in the sandbox, this address must be verified.
+    $recipient = $request->to;
+
+    // Specify a configuration set.
+    //$configset = 'ConfigSet';
+
+    $subject = $message->title;
+
+    $htmlbody = <<<EOD
+    <html>
+    <head></head>
+    <body>
+    $message->message
+    </body>
+    </html>
+    EOD;
+
+    $textbody = <<<EOD
+    Hello,
+    Please see the attached file for a list of customers to contact.
+    EOD;
+
+    // The full path to the file that will be attached to the email.
+    $att = public_path('uploads').'/'.$fileName;
+
+    // Create a new PHPMailer object.
+    $mail = new PHPMailer;
+
+    // Add components to the email.
+    $mail->setFrom($sender, $sendername);
+    $mail->addAddress($recipient);
+    $mail->Subject = $subject;
+    $mail->Body = $htmlbody;
+    $mail->AltBody = $textbody;
+    $mail->CharSet = 'UTF-8';
+    $mail->addAttachment($att);
+    //$mail->addCustomHeader('X-SES-CONFIGURATION-SET', $configset);
+
+    // Attempt to assemble the above components into a MIME message.
+    if (!$mail->preSend()) {
+        echo $mail->ErrorInfo;
+    } else {
+        // Create a new variable that contains the MIME message.
+        $message = $mail->getSentMIMEMessage();
+    }
+
+    // Try to send the message.
+    try {
+        $result = $this->getSESClient()->sendRawEmail([
+            'RawMessage' => [
+                'Data' => $message
+            ]
+        ]);
+        // If the message was sent, show the message ID.
+        $messageId = $result->get('MessageId');
+        echo("Email sent! Message ID: $messageId" . "\n");
+    } catch (SesException $error) {
+        // If the message was not sent, show a message explaining what went wrong.
+        echo("The email was not sent. Error message: "
+            . $error->getAwsErrorMessage() . "\n");
+    } 
+
     // SES
 
-    $toList = explode(", ", $request->to);
+    /* $toList = explode(", ", $request->to);
 
     $html_body = $message->message;
     $subject = $message->title;
@@ -118,9 +195,9 @@ class SendMailController extends Controller
       // output error message if fails
       dd($e->getMessage());
       echo "\n";
-    }
+    } */
 
-    //dd($mails);
+    //dd($att);
     return redirect()->route('home')->with(['message' => $message]);
   }
 

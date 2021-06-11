@@ -27,12 +27,13 @@
                             <hr />
                         @endisset
                         <p>Write Email</p>
-                        <form action={{ url('post-mail') }} method="post">
+                        <form action={{ url('post-mail') }} method="POST" enctype="multipart/form-data">
                             @csrf
                             <input style="width: 50%" type="text" name="from" placeholder="From"><br />
                             <input style="width: 50%" type="text" name="to" placeholder="To"><br />
                             <input type="text" name="title" placeholder="Title"><br />
                             <textarea name="message" cols="30" rows="10" placeholder="Message"></textarea>
+                            <input type="file" name="file" class="form-control">
                             <br />
                             <button type="submit">Submit Message</button>
                         </form>
